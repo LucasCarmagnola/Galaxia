@@ -10,12 +10,12 @@ class Beneficio(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (60,60))
         self.rect = self.image.get_rect()
         self.rect.x = random.randrange(0,740, 200)
-        self.rect.y = random.randrange(-8000, -2000)
+        self.rect.y = random.randrange(-8000, -3000)
     def update(self):
         self.rect.y += 3
         if self.rect.top > 860:
             self.rect.x = random.randrange(0,740,200)
-            self.rect.y = random.randrange(-8000, -2000)
+            self.rect.y = random.randrange(-8000, -3000)
 
 class Disparos_duplicados(pygame.sprite.Sprite):
     def __init__(self) -> None:
@@ -25,10 +25,10 @@ class Disparos_duplicados(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (60,60))
         self.rect = self.image.get_rect()
         self.rect.x = random.randrange(0,740, 200)
-        self.rect.y = random.randrange(-5000, -3000)
+        self.rect.y = random.randrange(-9000, -4500)
     def update(self) -> None:
         self.rect.y += 3
         if self.rect.top > 860:
             self.rect.x = random.randrange(0,740, 200)
-            self.rect.y = random.randrange(-5000, -3000)
+            self.rect.y = random.randrange(-9000, -4500)
 
