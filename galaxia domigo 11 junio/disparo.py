@@ -16,7 +16,7 @@ class Disparo(pygame.sprite.Sprite):
         self.visibilidad = True
     def update(self):
         self.rect.y += self.speedy
-        if self.rect.bottom < 0:
+        if self.rect.bottom < 0 or self.rect.y > 820:
             self.kill()
     
 

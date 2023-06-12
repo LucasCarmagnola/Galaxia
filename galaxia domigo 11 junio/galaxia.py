@@ -5,6 +5,7 @@ import disparo
 import nave_enemiga
 import beneficios
 import tiempo
+import random
 
 pygame.init()
 
@@ -12,6 +13,7 @@ pygame.init()
 ANCHO = 800
 ALTO = 800
 beneficio = False
+
 
 
 #-----------------VENTANA-------------------------------
@@ -23,8 +25,15 @@ pygame.display.set_caption("Intento de Galaxia piola")
 fondo = pygame.image.load("fondo_estrellas_oscuro.jpg")
 fondo = pygame.transform.scale(fondo, (ANCHO,ALTO))
 
+fondo_score = pygame.image.load("luna_150.png")
+fondo_score = pygame.transform.scale(fondo_score, (160,160))
+
 #-----------------TIMER---------------------------------
-timer_disparo_duplicado = tiempo.Timer(10000)
+timer_disparo_duplicado = tiempo.Timer(7000)
+
+
+timer = pygame.USEREVENT 
+pygame.time.set_timer(timer, 250)
 
 
 #-----------------FPS---------------------------------
@@ -36,6 +45,7 @@ disparos = pygame.sprite.Group()
 naves_enemigas = pygame.sprite.Group()
 lista_vidas = pygame.sprite.Group()
 lista_beneficio_disparos = pygame.sprite.Group()
+disparos_naves_enemigas = pygame.sprite.Group()
 
 #----------------NAVE PRINCIPAL-----------------------
 nave_buena = nave_principal.NavePrincipal()
@@ -47,6 +57,7 @@ for i in range(35):
     nave_mala = nave_enemiga.NaveEnemiga(800)
     all_sprites.add(nave_mala)
     naves_enemigas.add(nave_mala)
+
 
 #----------------VIDA-----------------------
 vida = beneficios.Beneficio()
@@ -67,10 +78,9 @@ while flag_game:
     for evento in lista_eventos:
         if evento.type == pygame.QUIT:
             flag_game = False
-
      
         if evento.type == pygame.KEYDOWN:
-            if evento.key == pygame.K_SPACE:
+            if evento.key == pygame.K_x:             
                 if beneficio == False:
                     bullet = disparo.Disparo(nave_buena.rect.centerx,nave_buena.rect.y,12,23,-5)
                     disparos.add(bullet)
@@ -82,6 +92,16 @@ while flag_game:
                     all_sprites.add(bullet)
                     disparos.add(bullet2)
                     all_sprites.add(bullet2)
+
+                       
+    #---------------DISPAROS NAVE ENEMIGA----------------
+        if evento.type == pygame.USEREVENT:
+            if evento.type == timer and len(disparos_naves_enemigas) < 100:
+                nave_ataque = random.choice(naves_enemigas.sprites())
+                if nave_ataque.rect.x > 0 and nave_ataque.rect.x < 800:
+                    disparo_nave = disparo.Disparo(nave_ataque.rect.centerx,nave_ataque.rect.bottom,12,23,5)
+                    disparos_naves_enemigas.add(disparo_nave)
+                    all_sprites.add(disparo_nave)
                 
                 
     all_sprites.update()
@@ -107,7 +127,6 @@ while flag_game:
 #----------COLISIONES NAVE BUENA - DISPARO X2----------------
     interseccion = pygame.sprite.spritecollide(nave_buena, lista_beneficio_disparos, True)
     if interseccion:
-        #beneficio = True
         timer_disparo_duplicado.start()
     timer_disparo_duplicado.update()
     if timer_disparo_duplicado.actividad:
@@ -121,19 +140,35 @@ while flag_game:
     
 #----------COLISIONES TIROS - NAVES ENEMIGAS--------------
     colisiones_bala = pygame.sprite.groupcollide(disparos, naves_enemigas, True, True)
+    if colisiones_bala:
+        nave_buena.score += 100
     for colision in colisiones_bala:
         nave_mala = nave_enemiga.NaveEnemiga(800)
         all_sprites.add(nave_mala)
         naves_enemigas.add(nave_mala)
 
+#----------COLISIONES NAVE BUENA - DISPAROS NAVES ENEMIGAS----------------
+    colision_disparo_enemigo = pygame.sprite.spritecollide(nave_buena, disparos_naves_enemigas, True)
+    if colision_disparo_enemigo:
+        nave_buena.vida -= 1
+    for colision in colision_disparo_enemigo:
+        nave_ataque = random.choice(naves_enemigas.sprites())
+        disparo_nave = disparo.Disparo(nave_ataque.rect.centerx,nave_ataque.rect.bottom,12,23,4)
+        disparos_naves_enemigas.add(disparo_nave)
+        all_sprites.add(disparo_nave)
     
 #-----------------FONDO-------------------------------
     ventana.blit(fondo,(0,0))
-
+    ventana.blit(fondo_score, (0,5))
 
 #----------------DIBUJAR SPRITES----------------------
     all_sprites.draw(ventana)
 
+#----------------SCORE-------------------------------
+    score = nave_buena.score
+    font = pygame.font.SysFont("segoeuisemibold", 25)
+    texto = font.render("SCORE: {0}".format(score), True, colores.WHITE)
+    ventana.blit(texto, (10,10))
 
 #----------------DIBUJAR BARRA DE VIDA----------------
     pygame.draw.rect(ventana, colores.RED1,(nave_buena.rect.x - 10,nave_buena.rect.y + 70,90,15))

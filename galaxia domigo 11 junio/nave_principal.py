@@ -13,6 +13,7 @@ class NavePrincipal(pygame.sprite.Sprite):
         self.rect.centery = 740
         self.rect.centerx = 400
         self.vida = 3
+        self.score = 0
     def update(self):
         lista_teclas = pygame.key.get_pressed()
         if lista_teclas[pygame.K_LEFT] and self.rect.left > 0:
