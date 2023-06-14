@@ -8,12 +8,18 @@ import tiempo
 import random
 
 pygame.init()
+pygame.mixer.init()
+sonido_fondo = pygame.mixer.Sound("nuevo_fondo.mp3")
+sonido_disparo = pygame.mixer.Sound("sonido_disparo.mp3")
+sonido_fondo.set_volume(0.05)
+sonido_disparo.set_volume(8)
 
 #----------------variables------------------------------
 ANCHO = 800
 ALTO = 800
 beneficio = False
 jugabilidad = 0
+
 
 font_input = pygame.font.SysFont("segoeuisemibold", 30)
 usuario = ''
@@ -51,7 +57,7 @@ all_sprites.add(nave_buena)
 
 #----------------NAVE ENEMIGA-----------------------
 for i in range(35):
-    nave_mala = nave_enemiga.NaveEnemiga(800)
+    nave_mala = nave_enemiga.NaveEnemiga(ANCHO)
     all_sprites.add(nave_mala)
     naves_enemigas.add(nave_mala)
 
@@ -70,6 +76,7 @@ flag_game = True
 while flag_game:
     lista_eventos = pygame.event.get()
     clock.tick(60)
+    
 
     if jugabilidad == 0:
         for evento in lista_eventos:
@@ -106,8 +113,8 @@ while flag_game:
         marco2 = pygame.transform.scale(marco2, (420,185))
         font = pygame.font.SysFont("Arial", 60)
         titulo = font.render("Final Galaxy", True, colores.WHITE)
-        ventana.blit(titulo, ((ANCHO/2)-150,50))
-        ventana.blit(marco2, ((ANCHO/2)-195, -8))
+        ventana.blit(titulo, ((ANCHO/2)-160,50))
+        ventana.blit(marco2, ((ANCHO/2)-205, -8))
 
         #----------------------RECT JUGAR------------------------------
         rect_jugar = pygame.draw.rect(ventana, colores.BLACK, ((ANCHO/2)-125, 230, 250,60))
@@ -132,17 +139,14 @@ while flag_game:
 
 
     elif jugabilidad == 1:
+        sonido_fondo.play(-1)
         for evento in lista_eventos:
             if evento.type == pygame.QUIT:
                 flag_game = False
-
-            if jugabilidad == 0:
-                fondo_inicio = pygame.image.load("fondo_inicio.png")
-                fondo_inicio = pygame.transform.scale(fondo_inicio, (ANCHO,ALTO))
-                ventana.blit(fondo_inicio,(0,0))
         
             if evento.type == pygame.KEYDOWN:
-                if evento.key == pygame.K_x:             
+                if evento.key == pygame.K_x: 
+                    sonido_disparo.play()            
                     if beneficio == False:
                         bullet = disparo.Disparo(nave_buena.rect.centerx,nave_buena.rect.y,12,23,-5)
                         disparos.add(bullet)
@@ -243,6 +247,8 @@ while flag_game:
 
     #---------------GAME OVER------------------------------
         if nave_buena.vida < 1:
+            jugabilidad = 2
+        if jugabilidad == 2:
             for evento in lista_eventos:
                 if evento.type == pygame.QUIT:
                     flag_game = False
@@ -271,8 +277,9 @@ while flag_game:
 
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 if rect_jugar.collidepoint(evento.pos):
-                    print("hola")
                     jugabilidad = 1
+                    print("hola")
+                    
 
 #---------------MOSTRAR CAMBIOS-----------------------
     pygame.display.flip()
