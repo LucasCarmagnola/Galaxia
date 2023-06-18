@@ -14,7 +14,7 @@ class NaveEnemiga(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = random.randrange(0,ancho-60,65)
         self.rect.y = random.randrange(-1600, 0, 65)
-        self.speedy = random.randint(1,3)
+        self.speedy = random.randint(2,3)
         self.movimientox = random.randrange(-1,2)
     def update(self):
         self.rect.y += self.speedy
@@ -23,6 +23,9 @@ class NaveEnemiga(pygame.sprite.Sprite):
         if self.rect.top > 860 or self.rect.right < 0 or self.rect.left > 800:
             self.rect.x = random.randrange(0,800-60,65)
             self.rect.y = random.randrange(-1600, 0, 65)
+    def reiniciar_posicion(self):
+        self.rect.x = random.randrange(0,800-60,65)
+        self.rect.y = random.randrange(-1600, 0, 65)
             
 
 

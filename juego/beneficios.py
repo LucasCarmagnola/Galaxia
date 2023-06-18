@@ -16,6 +16,9 @@ class Beneficio(pygame.sprite.Sprite):
         if self.rect.top > 860:
             self.rect.x = random.randrange(0,740,200)
             self.rect.y = random.randrange(-8000, -3000)
+    def reiniciar_posicion(self):
+        self.rect.x = random.randrange(0,740, 200)
+        self.rect.y = random.randrange(-8000, -3000)
 
 class Disparos_duplicados(pygame.sprite.Sprite):
     def __init__(self) -> None:
@@ -31,4 +34,7 @@ class Disparos_duplicados(pygame.sprite.Sprite):
         if self.rect.top > 860:
             self.rect.x = random.randrange(0,740, 200)
             self.rect.y = random.randrange(-9000, -4500)
+    def reiniciar_posicion(self):
+        self.rect.x = random.randrange(0,740, 200)
+        self.rect.y = random.randrange(-9000, -4500)
 

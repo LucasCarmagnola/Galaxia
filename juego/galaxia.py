@@ -6,19 +6,21 @@ import nave_enemiga
 import beneficios
 import tiempo
 import random
+import variables
+
+
+variables.sonido_fondo.play(-1)
 
 pygame.init()
-pygame.mixer.init()
-sonido_fondo = pygame.mixer.Sound("nuevo_fondo.mp3")
-sonido_disparo = pygame.mixer.Sound("sonido_disparo.mp3")
-sonido_fondo.set_volume(0.05)
-sonido_disparo.set_volume(8)
 
 #----------------variables------------------------------
 ANCHO = 800
 ALTO = 800
 beneficio = False
 jugabilidad = 0
+sonido = True
+flag_sonido = True
+y = 0
 
 
 font_input = pygame.font.SysFont("segoeuisemibold", 30)
@@ -29,10 +31,9 @@ ventana = pygame.display.set_mode((ANCHO, ALTO))
 pygame.display.set_caption("Final Galaxy")
 
 #-----------------FONDOS-------------------------------
-fondo = pygame.image.load("fondo_estrellas_oscuro.jpg")
+fondo = pygame.image.load("fondo2.jpg").convert()
 fondo = pygame.transform.scale(fondo, (ANCHO,ALTO))
-fondo_score = pygame.image.load("luna_150.png")
-fondo_score = pygame.transform.scale(fondo_score, (160,160))
+
 
 #-----------------TIMER---------------------------------
 timer_disparo_duplicado = tiempo.Timer(7000)
@@ -76,8 +77,6 @@ flag_game = True
 while flag_game:
     lista_eventos = pygame.event.get()
     clock.tick(60)
-    
-
     if jugabilidad == 0:
         for evento in lista_eventos:
             if evento.type == pygame.QUIT:
@@ -89,7 +88,7 @@ while flag_game:
                     usuario += evento.unicode
 
         #-----------------FONDO Y MARCO--------------------------------
-        fondo_inicio = pygame.image.load("fondo_inicio.png")
+        fondo_inicio = pygame.image.load("fondo_inicio_tierra.jpg")
         fondo_inicio = pygame.transform.scale(fondo_inicio, (ANCHO,ALTO))
         marco = pygame.image.load("marco2.png")
         marco = pygame.transform.scale(marco, (285,115))
@@ -130,23 +129,46 @@ while flag_game:
         ventana.blit(texto, (rect_puntos.x+17,rect_puntos.y+15))
         ventana.blit(marco, ((ANCHO/2)-142, 522))
 
+        #-------------------RECT SONIDO--------------------------------
+        
+        if flag_sonido:
+            foto_sonido = pygame.image.load("sonido_on.png")
+            foto_sonido = pygame.transform.scale(foto_sonido, (40,40))
+            rect_sonido = pygame.draw.rect(ventana, colores.DODGERBLUE3, (730, 30,40,40))
+            ventana.blit(foto_sonido, (rect_sonido))
+        else:
+            foto_sonido = pygame.image.load("sonido_off.png")
+            foto_sonido = pygame.transform.scale(foto_sonido, (40,40))
+            rect_sonido = pygame.draw.rect(ventana, colores.DODGERBLUE3, (730, 30,40,40))
+            ventana.blit(foto_sonido, (rect_sonido))
 
+        if sonido == True:
+            variables.sonido_fondo.set_volume(0.2)
+        elif sonido == False:
+            variables.sonido_fondo.set_volume(0)
+      
         if evento.type == pygame.MOUSEBUTTONDOWN :
-            if rect_jugar.collidepoint(evento.pos):
+            if rect_jugar.collidepoint(evento.pos) and usuario.isalnum():
                 jugabilidad = 1
+            if rect_sonido.collidepoint(evento.pos) and flag_sonido:
+                sonido = False
+                flag_sonido = False
+            elif rect_sonido.collidepoint(evento.pos) and flag_sonido == False:
+                sonido = True
+                flag_sonido = True
+    
             '''if rect_puntos.collidepoint(evento.pos):
                 jugabilidad = 2'''
 
-
-    elif jugabilidad == 1:
-        sonido_fondo.play(-1)
+    #hacer un try y except
+    if jugabilidad == 1:
         for evento in lista_eventos:
             if evento.type == pygame.QUIT:
                 flag_game = False
         
             if evento.type == pygame.KEYDOWN:
                 if evento.key == pygame.K_x: 
-                    sonido_disparo.play()            
+                    variables.sonido_disparo.play()            
                     if beneficio == False:
                         bullet = disparo.Disparo(nave_buena.rect.centerx,nave_buena.rect.y,12,23,-5)
                         disparos.add(bullet)
@@ -160,7 +182,7 @@ while flag_game:
                         all_sprites.add(bullet2)
 
                         
-        #---------------DISPAROS NAVE ENEMIGA----------------
+        #---------------DISPAROS NAVES ENEMIGAS----------------
             if evento.type == pygame.USEREVENT:
                 if evento.type == timer and len(disparos_naves_enemigas) < 100:
                     nave_ataque = random.choice(naves_enemigas.sprites())
@@ -180,20 +202,23 @@ while flag_game:
             naves_enemigas.add(nave_mala)
         if hits:
             nave_buena.vida = nave_buena.vida - 1
+            variables.sonido_vida.play()
 
     #----------COLISIONES NAVE BUENA - VIDAS----------------
         choque = pygame.sprite.spritecollide(nave_buena, lista_vidas, True)
         if choque:
             nave_buena.vida = 3
+            variables.sonido_beneficio.play()
         for e_choque in choque:
             vida = beneficios.Beneficio()
             lista_vidas.add(vida)
             all_sprites.add(vida)
 
-    #----------COLISIONES NAVE BUENA - DISPARO X2----------------
+    #----------COLISIONES NAVE BUENA - BENEFICIO DISPARO X2----------------
         interseccion = pygame.sprite.spritecollide(nave_buena, lista_beneficio_disparos, True)
         if interseccion:
             timer_disparo_duplicado.start()
+            variables.sonido_beneficio.play()
         timer_disparo_duplicado.update()
         if timer_disparo_duplicado.actividad:
             beneficio = True
@@ -208,15 +233,18 @@ while flag_game:
         colisiones_bala = pygame.sprite.groupcollide(disparos, naves_enemigas, True, True)
         if colisiones_bala:
             nave_buena.score += 50
+            variables.sonido_explosion.play()
         for colision in colisiones_bala:
             nave_mala = nave_enemiga.NaveEnemiga(800)
             all_sprites.add(nave_mala)
             naves_enemigas.add(nave_mala)
+    
 
     #----------COLISIONES NAVE BUENA - DISPAROS NAVES ENEMIGAS----------------
         colision_disparo_enemigo = pygame.sprite.spritecollide(nave_buena, disparos_naves_enemigas, True)
         if colision_disparo_enemigo:
             nave_buena.vida -= 1
+            variables.sonido_vida.play()
         for colision in colision_disparo_enemigo:
             nave_ataque = random.choice(naves_enemigas.sprites())
             disparo_nave = disparo.Disparo(nave_ataque.rect.centerx,nave_ataque.rect.bottom,12,23,4)
@@ -224,8 +252,12 @@ while flag_game:
             all_sprites.add(disparo_nave)
         
     #-----------------FONDO-------------------------------
-        ventana.blit(fondo,(0,0))
-        ventana.blit(fondo_score, (0,5))
+        
+        y_relativa = y % fondo.get_rect().height
+        ventana.blit(fondo,(0,y_relativa - fondo.get_rect().height))
+        if y_relativa < ALTO:
+            ventana.blit(fondo, (0, y_relativa))
+        y += 1
 
     #----------------DIBUJAR SPRITES----------------------
         all_sprites.draw(ventana)
@@ -247,17 +279,21 @@ while flag_game:
 
     #---------------GAME OVER------------------------------
         if nave_buena.vida < 1:
-            jugabilidad = 2
-        if jugabilidad == 2:
+            #jugabilidad = 2
+        #if jugabilidad == 2:
+            variables.sonido_disparo.stop()
+            variables.sonido_explosion.stop()
+            variables.sonido_vida.stop()
             for evento in lista_eventos:
                 if evento.type == pygame.QUIT:
                     flag_game = False
-
-            fondo_inicio = pygame.image.load("fondo_inicio.png")
-            fondo_inicio = pygame.transform.scale(fondo_inicio, (ANCHO,ALTO))
+            nave_buena.score = 0
+            all_sprites.remove(disparos)
+            fondo_game_over = pygame.image.load("fondo_gameover.jpg")
+            fondo_game_over = pygame.transform.scale(fondo_game_over, (ANCHO+400,ALTO))
             marco = pygame.image.load("marco2.png")
             marco = pygame.transform.scale(marco, (287,115))
-            ventana.blit(fondo_inicio,(0,0))
+            ventana.blit(fondo_game_over,(-200,0))
             #-------------------RECT JUGAR------------------------------
             rect_jugar = pygame.draw.rect(ventana, colores.BLACK, ((ANCHO/2)-125, 200, 250,60))
             font = pygame.font.SysFont("segoeuisemibold", 25)
@@ -278,10 +314,19 @@ while flag_game:
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 if rect_jugar.collidepoint(evento.pos):
                     jugabilidad = 1
-                    print("hola")
+                    nave_buena.vida = 3
+                    nave_buena.score = 0
+                    for nave in naves_enemigas:
+                        nave.reiniciar_posicion()
+                    vida.reiniciar_posicion()
+                    beneficio_disparo.reiniciar_posicion()
+                    all_sprites.remove(disparos_naves_enemigas, disparos)
+                    disparos_naves_enemigas.empty()
+                    disparos.empty()
                     
-
-#---------------MOSTRAR CAMBIOS-----------------------
+  
+            #---------------MOSTRAR CAMBIOS-----------------------
     pygame.display.flip()
+    
 
 pygame.quit()
