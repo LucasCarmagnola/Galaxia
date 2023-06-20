@@ -1,8 +1,5 @@
 import pygame
 import colores
-#import galaxia
-
-
 
 class NavePrincipal(pygame.sprite.Sprite):
     def __init__(self) -> None:
