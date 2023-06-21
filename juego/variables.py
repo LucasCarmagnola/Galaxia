@@ -7,7 +7,7 @@ ANCHO = 800
 ALTO = 800
 beneficio = False
 jugabilidad = 0
-sonido = True
+flag_sonido = True
 y = 0
 usuario = ''
 data_base = False
@@ -16,6 +16,7 @@ game_over = False
 flag_tabla = 0
 flag_tabla_ordenada = 0
 contador_tiempo = 0
+boton_presionado = False
 
 
 #------------------grupos de sprites-------------------

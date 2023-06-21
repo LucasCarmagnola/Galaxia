@@ -13,7 +13,6 @@ sonido_fondo.play(-1)
 
 pygame.init()
 
-flag_sonido = True
 
 #----------------ingreso usuario------------------------------
 font_input = pygame.font.SysFont("segoeuisemibold", 30)
@@ -85,7 +84,6 @@ while flag_game:
         ventana.blit(marco, ((ANCHO/2)-142, 522))
 
         #-------------------RECT SONIDO--------------------------------
-
         if flag_sonido:
             foto_sonido = cargar_foto("imagenes/sonido_on.png", 40, 40)
             rect_sonido = pygame.draw.rect(ventana, colores.DODGERBLUE3, (730, 30,40,40))
@@ -96,19 +94,19 @@ while flag_game:
             rect_sonido = pygame.draw.rect(ventana, colores.DODGERBLUE3, (730, 30,40,40))
             ventana.blit(foto_sonido, (rect_sonido))
             sonido_fondo.set_volume(0)
-
+       
         if evento.type == pygame.MOUSEBUTTONDOWN:
             if rect_jugar.collidepoint(evento.pos) and len(usuario) > 0:
                 jugabilidad = 1
-            if rect_sonido.collidepoint(evento.pos) and flag_sonido:
-                flag_sonido = False
-                #print("mute")
-            elif rect_sonido.collidepoint(evento.pos) and flag_sonido == False:
-                flag_sonido = True
-                #print("sonido")
+            if rect_sonido.collidepoint(evento.pos):
+                boton_presionado = True
             if rect_puntos.collidepoint(evento.pos):
                 jugabilidad = 2
                 flag_puntajes = True
+        elif evento.type == pygame.MOUSEBUTTONUP:
+            if rect_sonido.collidepoint(evento.pos) and boton_presionado:
+                flag_sonido = not flag_sonido
+            boton_presionado = False
 
     if jugabilidad == 1:
         for evento in lista_eventos:
