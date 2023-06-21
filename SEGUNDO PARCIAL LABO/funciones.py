@@ -34,7 +34,6 @@ def get_scores_ordenados():
         cursor=conexion.execute("SELECT * FROM jugadores ORDER BY score DESC;")
         lista_filas = []
     for fila in cursor:
-        print(fila)
         lista_filas.append(fila)    
     return lista_filas
 

@@ -112,7 +112,6 @@ while flag_game:
             if evento.type == pygame.QUIT:
                 flag_game = False
             contador_tiempo += 1
-            print(contador_tiempo)
             if evento.type == pygame.KEYDOWN:
                 if evento.key == pygame.K_x and contador_tiempo > 4: 
                     sonido_disparo.play() 
@@ -319,8 +318,7 @@ while flag_game:
                     jugabilidad = 0
                     flag_puntajes = False
                     flag_tabla = 0
-                    flag_tabla_ordenada = 0
-                        
+                    flag_tabla_ordenada = 0                  
                         
     #---------------MOSTRAR CAMBIOS-----------------------
     pygame.display.flip()
