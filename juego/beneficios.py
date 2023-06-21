@@ -5,7 +5,7 @@ import random
 class Beneficio(pygame.sprite.Sprite):
     def __init__(self) -> None:
         super().__init__()
-        self.image =  pygame.image.load("vida.png")
+        self.image =  pygame.image.load("imagenes/vida.png")
         self.image.set_colorkey(colores.BLACK)
         self.image = pygame.transform.scale(self.image, (60,60))
         self.rect = self.image.get_rect()
@@ -23,7 +23,7 @@ class Beneficio(pygame.sprite.Sprite):
 class Disparos_duplicados(pygame.sprite.Sprite):
     def __init__(self) -> None:
         super().__init__()
-        self.image =  pygame.image.load("X2_misiles.jpg")
+        self.image =  pygame.image.load("imagenes/X2_misiles.jpg")
         self.image.set_colorkey(colores.BLACK)
         self.image = pygame.transform.scale(self.image, (60,60))
         self.rect = self.image.get_rect()

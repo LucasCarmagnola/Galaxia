@@ -2,14 +2,12 @@ import pygame
 from funciones import *
 import nave_principal
 import beneficios
-import colores
 
 ANCHO = 800
 ALTO = 800
 beneficio = False
 jugabilidad = 0
 sonido = True
-flag_sonido = True
 y = 0
 usuario = ''
 data_base = False
@@ -17,6 +15,8 @@ flag_puntajes = False
 game_over = False
 flag_tabla = 0
 flag_tabla_ordenada = 0
+contador_tiempo = 0
+
 
 #------------------grupos de sprites-------------------
 all_sprites = pygame.sprite.Group()
@@ -45,25 +45,25 @@ lista_beneficio_disparos.add(beneficio_disparo)
 all_sprites.add(beneficio_disparo)
 
 #----------------------imagenes-----------------------------------
-fondo = cargar_foto("fondo2.jpg", ANCHO, ALTO)
-fondo_game_over = cargar_foto("fondo_gameover.jpg", ANCHO+400, ALTO)
-marco = cargar_foto("marco2.png", 287, 115)
-fondo_scores = cargar_foto("fondo_scores.jpg", ANCHO+200, ALTO)
+fondo = cargar_foto("imagenes/fondo2.jpg", ANCHO, ALTO)
+fondo_game_over = cargar_foto("imagenes/fondo_gameover.jpg", ANCHO+400, ALTO)
+marco = cargar_foto("imagenes/marco2.png", 287, 115)
+fondo_scores = cargar_foto("imagenes/fondo_scores.jpg", ANCHO+200, ALTO)
 
 #-----------------FONDO Y MARCO--------------------------------
-fondo_inicio = cargar_foto("fondo_inicio_tierra.jpg", ANCHO, ALTO)
-marco = cargar_foto("marco2.png", 285, 115)
-marco2 = cargar_foto("marco2.png", 420, 185)
-marco_score = cargar_foto("marco2.png", 210, 70)
+fondo_inicio = cargar_foto("imagenes/fondo_inicio_tierra.jpg", ANCHO, ALTO)
+marco = cargar_foto("imagenes/marco2.png", 285, 115)
+marco2 = cargar_foto("imagenes/marco2.png", 420, 185)
+marco_score = cargar_foto("imagenes/marco2.png", 210, 70)
 
 
 #--------------------SONIDOS----------------------------------------
 pygame.mixer.init()
-sonido_fondo = pygame.mixer.Sound("nuevo_fondo.mp3")
-sonido_disparo = pygame.mixer.Sound("disparo_laser.wav")
-sonido_explosion = pygame.mixer.Sound("sonido_explosion.wav")
-sonido_vida = pygame.mixer.Sound("perder_vida.wav")
-sonido_beneficio = pygame.mixer.Sound("beneficio.mp3")
+sonido_fondo = pygame.mixer.Sound("sonidos/nuevo_fondo.mp3")
+sonido_disparo = pygame.mixer.Sound("sonidos/disparo_laser.wav")
+sonido_explosion = pygame.mixer.Sound("sonidos/sonido_explosion.wav")
+sonido_vida = pygame.mixer.Sound("sonidos/perder_vida.wav")
+sonido_beneficio = pygame.mixer.Sound("sonidos/beneficio.mp3")
 sonido_disparo.set_volume(0.05)
 sonido_fondo.set_volume(0.2)
 sonido_explosion.set_volume(0.05)

@@ -13,6 +13,7 @@ sonido_fondo.play(-1)
 
 pygame.init()
 
+flag_sonido = True
 
 #----------------ingreso usuario------------------------------
 font_input = pygame.font.SysFont("segoeuisemibold", 30)
@@ -84,26 +85,27 @@ while flag_game:
         ventana.blit(marco, ((ANCHO/2)-142, 522))
 
         #-------------------RECT SONIDO--------------------------------
-        rect_sonido = pygame.draw.rect(ventana, colores.DODGERBLUE3, (730, 30,40,40))
+
         if flag_sonido:
-            foto_sonido = cargar_foto("sonido_on.png", 40, 40)
+            foto_sonido = cargar_foto("imagenes/sonido_on.png", 40, 40)
+            rect_sonido = pygame.draw.rect(ventana, colores.DODGERBLUE3, (730, 30,40,40))
             ventana.blit(foto_sonido, (rect_sonido))
             sonido_fondo.set_volume(0.2)
         else:
-            foto_sonido = cargar_foto("sonido_off.png", 40, 40)
+            foto_sonido = cargar_foto("imagenes/sonido_off.png", 40, 40)
+            rect_sonido = pygame.draw.rect(ventana, colores.DODGERBLUE3, (730, 30,40,40))
             ventana.blit(foto_sonido, (rect_sonido))
             sonido_fondo.set_volume(0)
 
-
-        if evento.type == pygame.MOUSEBUTTONDOWN :
+        if evento.type == pygame.MOUSEBUTTONDOWN:
             if rect_jugar.collidepoint(evento.pos) and len(usuario) > 0:
                 jugabilidad = 1
-            if rect_sonido.collidepoint(evento.pos) and flag_sonido == False:
+            if rect_sonido.collidepoint(evento.pos) and flag_sonido:
+                flag_sonido = False
+                #print("mute")
+            elif rect_sonido.collidepoint(evento.pos) and flag_sonido == False:
                 flag_sonido = True
-                print("sonido")
-            elif rect_sonido.collidepoint(evento.pos) and flag_sonido == True:
-                flag_sonido = False 
-                print("mute")
+                #print("sonido")
             if rect_puntos.collidepoint(evento.pos):
                 jugabilidad = 2
                 flag_puntajes = True
@@ -112,10 +114,12 @@ while flag_game:
         for evento in lista_eventos:
             if evento.type == pygame.QUIT:
                 flag_game = False
-        
+            contador_tiempo += 1
+            print(contador_tiempo)
             if evento.type == pygame.KEYDOWN:
-                if evento.key == pygame.K_x: 
-                    sonido_disparo.play()            
+                if evento.key == pygame.K_x and contador_tiempo > 4: 
+                    sonido_disparo.play() 
+                    contador_tiempo = 0        
                     if beneficio == False:
                         bullet = disparo.Disparo(nave_buena.rect.centerx,nave_buena.rect.y,12,23,-5)
                         disparos.add(bullet)
@@ -142,40 +146,34 @@ while flag_game:
         all_sprites.update()
 
     #----------COLISIONES NAVE BUENA - NAVES ENEMIGAS----------------
-        hits = pygame.sprite.spritecollide(nave_buena, naves_enemigas,True)
-        for hit in hits:
+        if pygame.sprite.spritecollide(nave_buena, naves_enemigas,True):
             nave_mala = nave_enemiga.NaveEnemiga(800)
             all_sprites.add(nave_mala)
             naves_enemigas.add(nave_mala)
-        if hits:
             nave_buena.vida = nave_buena.vida - 1
             sonido_vida.play()
 
     #----------COLISIONES NAVE BUENA - VIDAS----------------
-        choque = pygame.sprite.spritecollide(nave_buena, lista_vidas, True)
-        if choque:
+        if pygame.sprite.spritecollide(nave_buena, lista_vidas, True):
             nave_buena.vida = 3
             sonido_beneficio.play()
-        for e_choque in choque:
             vida = beneficios.Beneficio()
             lista_vidas.add(vida)
             all_sprites.add(vida)
 
     #----------COLISIONES NAVE BUENA - BENEFICIO DISPARO X2----------------
-        interseccion = pygame.sprite.spritecollide(nave_buena, lista_beneficio_disparos, True)
-        if interseccion:
+        if pygame.sprite.spritecollide(nave_buena, lista_beneficio_disparos, True):
             timer_disparo_duplicado.start()
             sonido_beneficio.play()
+            beneficio_disparo = beneficios.Disparos_duplicados()
+            lista_beneficio_disparos.add(beneficio_disparo)
+            all_sprites.add(beneficio_disparo)
         timer_disparo_duplicado.update()
         if timer_disparo_duplicado.actividad:
             beneficio = True
         else:
             beneficio = False
-        for e_interseccion in interseccion:
-            beneficio_disparo = beneficios.Disparos_duplicados()
-            lista_beneficio_disparos.add(beneficio_disparo)
-            all_sprites.add(beneficio_disparo)
-        
+
     #----------COLISIONES TIROS - NAVES ENEMIGAS--------------
         colisiones_bala = pygame.sprite.groupcollide(disparos, naves_enemigas, True, True)
         if colisiones_bala:
@@ -188,11 +186,9 @@ while flag_game:
     
 
     #----------COLISIONES NAVE BUENA - DISPAROS NAVES ENEMIGAS----------------
-        colision_disparo_enemigo = pygame.sprite.spritecollide(nave_buena, disparos_naves_enemigas, True)
-        if colision_disparo_enemigo:
+        if pygame.sprite.spritecollide(nave_buena, disparos_naves_enemigas, True):
             nave_buena.vida -= 1
             sonido_vida.play()
-        for colision in colision_disparo_enemigo:
             nave_ataque = random.choice(naves_enemigas.sprites())
             disparo_nave = disparo.Disparo(nave_ataque.rect.centerx,nave_ataque.rect.bottom,12,23,4)
             disparos_naves_enemigas.add(disparo_nave)

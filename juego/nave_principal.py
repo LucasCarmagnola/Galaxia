@@ -1,10 +1,9 @@
 import pygame
-import colores
 
 class NavePrincipal(pygame.sprite.Sprite):
     def __init__(self) -> None:
         super().__init__()
-        self.image = pygame.image.load("nave_espacial3.png")
+        self.image = pygame.image.load("imagenes/nave_espacial3.png")
         self.image = pygame.transform.scale(self.image, (70,70))
         self.rect = self.image.get_rect()
         self.rect.centery = 740

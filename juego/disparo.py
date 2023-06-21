@@ -6,7 +6,7 @@ import colores
 class Disparo(pygame.sprite.Sprite):
     def __init__(self,x,y,ancho,alto,movimiento) -> None:
         super().__init__()
-        self.image = pygame.image.load("disparo.png")
+        self.image = pygame.image.load("imagenes/disparo.png")
         self.image.set_colorkey(colores.BLACK)
         self.image = pygame.transform.scale(self.image,(ancho,alto))
         self.rect = self.image.get_rect()

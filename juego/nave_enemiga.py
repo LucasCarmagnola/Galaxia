@@ -8,7 +8,7 @@ class NaveEnemiga(pygame.sprite.Sprite):
     def __init__(self,ancho) -> None:
         super().__init__()
         self.random = random.randint(1,3)
-        self.image =  pygame.image.load("nave_mala{0}.png".format(self.random))
+        self.image =  pygame.image.load("imagenes/nave_mala{0}.png".format(self.random))
         self.image.set_colorkey(colores.BLACK)
         self.image = pygame.transform.scale(self.image, (60,60))
         self.rect = self.image.get_rect()
