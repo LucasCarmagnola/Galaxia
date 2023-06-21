@@ -8,11 +8,9 @@ import random
 from variables import *
 from funciones import *
 
-
 sonido_fondo.play(-1)
 
 pygame.init()
-
 
 #----------------ingreso usuario------------------------------
 font_input = pygame.font.SysFont("segoeuisemibold", 30)
@@ -23,11 +21,12 @@ pygame.display.set_caption("Final Galaxy")
 
 #-----------------TIMER---------------------------------
 timer_disparo_duplicado = tiempo.Timer(7000)
+timer_escudo = tiempo.Timer(5000)
 timer = pygame.USEREVENT 
 pygame.time.set_timer(timer, 250)
 
 #----------------NAVE ENEMIGA-----------------------
-for i in range(35):
+for i in range(30):
     nave_mala = nave_enemiga.NaveEnemiga(ANCHO)
     all_sprites.add(nave_mala)
     naves_enemigas.add(nave_mala)
@@ -129,8 +128,7 @@ while flag_game:
                         all_sprites.add(bullet)
                         disparos.add(bullet2)
                         all_sprites.add(bullet2)
-
-                        
+        
         #---------------DISPAROS NAVES ENEMIGAS----------------
             if evento.type == pygame.USEREVENT:
                 if evento.type == timer and len(disparos_naves_enemigas) < 100:
@@ -139,8 +137,7 @@ while flag_game:
                         disparo_nave = disparo.Disparo(nave_ataque.rect.centerx,nave_ataque.rect.bottom,12,23,5)
                         disparos_naves_enemigas.add(disparo_nave)
                         all_sprites.add(disparo_nave)
-                    
-                    
+                          
         all_sprites.update()
 
     #----------COLISIONES NAVE BUENA - NAVES ENEMIGAS----------------
@@ -148,16 +145,37 @@ while flag_game:
             nave_mala = nave_enemiga.NaveEnemiga(800)
             all_sprites.add(nave_mala)
             naves_enemigas.add(nave_mala)
-            nave_buena.vida = nave_buena.vida - 1
-            sonido_vida.play()
+            if beneficio_escudo == False:
+                nave_buena.vida = nave_buena.vida - 1
+                sonido_vida.play()
 
     #----------COLISIONES NAVE BUENA - VIDAS----------------
         if pygame.sprite.spritecollide(nave_buena, lista_vidas, True):
             nave_buena.vida = 3
             sonido_beneficio.play()
-            vida = beneficios.Beneficio()
+            vida = beneficios.Beneficio("imagenes/vida.png")
             lista_vidas.add(vida)
             all_sprites.add(vida)
+    
+    #----------COLISIONES NAVE BUENA - ESCUDO-------------------
+        if pygame.sprite.spritecollide(nave_buena, lista_escudos, True):
+            timer_escudo.start()
+            sonido_beneficio.play()
+            escudo = beneficios.Beneficio("imagenes/burbuja.png")
+            lista_escudos.add(escudo)
+            all_sprites.add(lista_escudos)
+            duracion_escudo = 5
+        timer_escudo.update()
+        font = pygame.font.SysFont("segoeuisemibold", 25)
+        texto_escudo = font.render("{0}".format(duracion_escudo), True, colores.WHITE)
+        if contador_escudo > 60:
+            duracion_escudo -= 1
+            contador_escudo = 0
+        if timer_escudo.actividad:
+            beneficio_escudo = True
+            contador_escudo += 1
+        else: 
+            beneficio_escudo = False
 
     #----------COLISIONES NAVE BUENA - BENEFICIO DISPARO X2----------------
         if pygame.sprite.spritecollide(nave_buena, lista_beneficio_disparos, True):
@@ -182,11 +200,11 @@ while flag_game:
             all_sprites.add(nave_mala)
             naves_enemigas.add(nave_mala)
     
-
     #----------COLISIONES NAVE BUENA - DISPAROS NAVES ENEMIGAS----------------
         if pygame.sprite.spritecollide(nave_buena, disparos_naves_enemigas, True):
-            nave_buena.vida -= 1
-            sonido_vida.play()
+            if beneficio_escudo == False:
+                nave_buena.vida -= 1
+                sonido_vida.play()
             nave_ataque = random.choice(naves_enemigas.sprites())
             disparo_nave = disparo.Disparo(nave_ataque.rect.centerx,nave_ataque.rect.bottom,12,23,4)
             disparos_naves_enemigas.add(disparo_nave)
@@ -201,6 +219,9 @@ while flag_game:
 
     #----------------DIBUJAR SPRITES----------------------
         all_sprites.draw(ventana)
+        if beneficio_escudo:
+            ventana.blit(marco_vida, (nave_buena.rect.x-10, nave_buena.rect.y-22))
+            ventana.blit(texto_escudo, (730, 750))
 
     #----------------SCORE----------------------------------
         score = nave_buena.score
@@ -223,11 +244,6 @@ while flag_game:
             jugabilidad = 2
 
     if jugabilidad == 2:
-
-        sonido_disparo.stop()
-        sonido_explosion.stop()
-        sonido_vida.stop()
-
         if flag_tabla == 0 and len(usuario) > 0 and nave_buena.score > 0:
             commitear_tabla(usuario, nave_buena.score)
             flag_tabla = 1
@@ -241,13 +257,13 @@ while flag_game:
             nave.reiniciar_posicion()
         vida.reiniciar_posicion()
         beneficio_disparo.reiniciar_posicion()
+        escudo.reiniciar_posicion()
         timer_disparo_duplicado.actividad = False           
         all_sprites.remove(disparos_naves_enemigas, disparos)
         disparos_naves_enemigas.empty()
         disparos.empty()
         nave_buena.score = 0
         
-        all_sprites.remove(disparos)
         ventana.blit(fondo_game_over,(-200,0))
         #-------------------RECT JUGAR------------------------------
         rect_jugar = pygame.draw.rect(ventana, colores.BLACK, ((ANCHO/2)-125, 200, 250,60))

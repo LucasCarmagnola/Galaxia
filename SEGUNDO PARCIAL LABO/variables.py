@@ -17,6 +17,9 @@ flag_tabla = 0
 flag_tabla_ordenada = 0
 contador_tiempo = 0
 boton_presionado = False
+beneficio_escudo = False
+duracion_escudo = 5
+contador_escudo = 0
 
 
 #------------------grupos de sprites-------------------
@@ -26,6 +29,7 @@ naves_enemigas = pygame.sprite.Group()
 lista_vidas = pygame.sprite.Group()
 lista_beneficio_disparos = pygame.sprite.Group()
 disparos_naves_enemigas = pygame.sprite.Group()
+lista_escudos = pygame.sprite.Group()
 
 
 #----------------------fps---------------------------------
@@ -36,7 +40,7 @@ nave_buena = nave_principal.NavePrincipal()
 all_sprites.add(nave_buena)
 
 #----------------VIDA------------------------------
-vida = beneficios.Beneficio()
+vida = beneficios.Beneficio("imagenes/vida.png")
 lista_vidas.add(vida)
 all_sprites.add(vida)
 
@@ -44,6 +48,11 @@ all_sprites.add(vida)
 beneficio_disparo = beneficios.Disparos_duplicados()
 lista_beneficio_disparos.add(beneficio_disparo)
 all_sprites.add(beneficio_disparo)
+
+#------------------ESCUDO------------------------------
+escudo = beneficios.Beneficio("imagenes/burbuja.png")
+lista_escudos.add(escudo)
+all_sprites.add(lista_escudos)
 
 #----------------------imagenes-----------------------------------
 fondo = cargar_foto("imagenes/fondo2.jpg", ANCHO, ALTO)
@@ -56,6 +65,7 @@ fondo_inicio = cargar_foto("imagenes/fondo_inicio_tierra.jpg", ANCHO, ALTO)
 marco = cargar_foto("imagenes/marco2.png", 285, 115)
 marco2 = cargar_foto("imagenes/marco2.png", 420, 185)
 marco_score = cargar_foto("imagenes/marco2.png", 210, 70)
+marco_vida = cargar_foto("imagenes/marco2.png", 90, 120)
 
 
 #--------------------SONIDOS----------------------------------------

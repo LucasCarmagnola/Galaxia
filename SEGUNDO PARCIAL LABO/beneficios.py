@@ -3,9 +3,9 @@ import colores
 import random 
 
 class Beneficio(pygame.sprite.Sprite):
-    def __init__(self) -> None:
+    def __init__(self,path) -> None:
         super().__init__()
-        self.image =  pygame.image.load("imagenes/vida.png")
+        self.image =  pygame.image.load(path)
         self.image.set_colorkey(colores.BLACK)
         self.image = pygame.transform.scale(self.image, (60,60))
         self.rect = self.image.get_rect()
