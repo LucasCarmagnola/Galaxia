@@ -12,26 +12,16 @@ sonido_fondo.play(-1)
 
 pygame.init()
 
-#----------------ingreso usuario------------------------------
-font_input = pygame.font.SysFont("segoeuisemibold", 30)
-
 #-----------------VENTANA-------------------------------
 ventana = pygame.display.set_mode((ANCHO, ALTO))
 pygame.display.set_caption("Final Galaxy")
 
-#-----------------TIMER---------------------------------
+#-----------------TIMERS---------------------------------
 timer_disparo_duplicado = tiempo.Timer(7000)
 timer_escudo = tiempo.Timer(5000)
 timer = pygame.USEREVENT 
 pygame.time.set_timer(timer, 250)
 
-#----------------NAVE ENEMIGA-----------------------
-for i in range(30):
-    nave_mala = nave_enemiga.NaveEnemiga(ANCHO)
-    all_sprites.add(nave_mala)
-    naves_enemigas.add(nave_mala)
-
-flag_game = True
 crear_tabla()
 while flag_game:
     lista_eventos = pygame.event.get()
@@ -52,6 +42,7 @@ while flag_game:
         #------------------INGRESAR USUSARIO---------------------------  
         rect_usuario = pygame.Rect((ANCHO/2)-125, 430, 250,60)    
         pygame.draw.rect(ventana, colores.BLACK, rect_usuario, 2)
+        font_input = pygame.font.SysFont("segoeuisemibold", 30)
         font_input_surface = font_input.render(usuario, True, colores.BLACK)
         ventana.blit(font_input_surface,(rect_usuario.x+20, rect_usuario.y+10))
 

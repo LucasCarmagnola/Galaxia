@@ -1,10 +1,12 @@
 import pygame
 from funciones import *
 import nave_principal
+import nave_enemiga
 import beneficios
 
 ANCHO = 800
 ALTO = 800
+flag_game = True
 beneficio = False
 jugabilidad = 0
 flag_sonido = True
@@ -38,6 +40,12 @@ clock = pygame.time.Clock()
 #------------------NAVE PRINCIPAL-----------------------
 nave_buena = nave_principal.NavePrincipal()
 all_sprites.add(nave_buena)
+
+#----------------NAVE ENEMIGA-----------------------
+for i in range(30):
+    nave_mala = nave_enemiga.NaveEnemiga(ANCHO)
+    all_sprites.add(nave_mala)
+    naves_enemigas.add(nave_mala)
 
 #----------------VIDA------------------------------
 vida = beneficios.Beneficio("imagenes/vida.png")
