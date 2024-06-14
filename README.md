@@ -1,2 +1,2 @@
-# Galaxia
-galaxia primera vez funcional
+Galaga 
+game with Python
